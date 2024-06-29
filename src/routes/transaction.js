@@ -22,7 +22,8 @@ const createTransaction = (request) => {
         payee_name,
         amount: transactionAmount,
         cleared: false,
-        date: new Date().toISOString().split("T")[0],
+        date: new Date(),
+        notes: request.body.notes,
         imported_id: `${new Date().getTime()}`,
     };
 };
