@@ -3,8 +3,9 @@ const transactionSchema = {
         body: {
             type: "object",
             properties: {
-                amount: { type: "number", minimum: 0 },
+                amount: { type: "number", minimum: 0.01 },
                 merchant: { type: "string" },
+                notes: { type: "string" }
             },
             anyOf: [{ required: ["merchant"] }, { required: ["amount"] }],
         },
@@ -12,7 +13,7 @@ const transactionSchema = {
 };
 
 const createTransaction = (request) => {
-    const { merchant, amount } = request.body;
+    const { merchant, amount, notes } = request.body;
 
     const payee_name = merchant || process.env.ACTUAL_BACKUP_PAYEE;
     const transactionAmount =
@@ -22,8 +23,8 @@ const createTransaction = (request) => {
         payee_name,
         amount: transactionAmount,
         cleared: false,
-        date: new Date(),
-        notes: request.body.notes,
+        date: new Date().toISOString().split("T")[0],
+        notes: notes,
         imported_id: `${new Date().getTime()}`,
     };
 };
@@ -62,6 +63,7 @@ module.exports = async (fastify, opts) => {
             handleTransactionResult(result, transaction, reply, fastify.log);
         } catch (err) {
             fastify.log.error(`Error importing transaction: ${err.message}`);
+            
             reply.code(400).send({
                 error: "Faield to import transaction",
                 message: err.message,
