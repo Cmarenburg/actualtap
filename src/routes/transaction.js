@@ -8,6 +8,7 @@ const transactionSchema = {
                 notes: { type: "string" }
             },
             anyOf: [{ required: ["merchant"] }, { required: ["amount"] }],
+            anyOf: [{ required: ["merchant"] }, { required: ["amount"] }],
         },
     },
 };
